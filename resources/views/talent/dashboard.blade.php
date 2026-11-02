@@ -14,7 +14,7 @@
                         @endif
                     </div>
                     <div>
-                        <div class="flex items-center gap-2 mb-1.5">
+                        <div class="flex items-center gap-2 mb-1.5 flex-wrap">
                             <span class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[11px] font-bold">
                                 Portal Talent
                             </span>
@@ -22,6 +22,14 @@
                                 <span class="w-1.5 h-1.5 rounded-full {{ $talent->is_active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
                                 <span>{{ $talent->is_active ? 'Tersedia' : 'Nonaktif' }}</span>
                             </span>
+                            @if ($talent->city)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700">
+                                    <svg class="w-3 h-3 text-rose-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>{{ $talent->city }}</span>
+                                </span>
+                            @endif
                         </div>
                         <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Halo, {{ $talent->name }}!</h1>
                         <p class="text-xs text-slate-500 mt-0.5">Kelola foto profil, tarif layanan, dan pantau pesanan masuk.</p>
@@ -140,6 +148,12 @@
                         <div>
                             <label for="phone" class="block text-xs font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
                             <input type="tel" name="phone" id="phone" required value="{{ old('phone', $talent->phone) }}"
+                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                        </div>
+
+                        <div>
+                            <label for="city" class="block text-xs font-semibold text-slate-700 mb-1">Daerah / Kota Domisili</label>
+                            <input type="text" name="city" id="city" placeholder="Contoh: Jakarta Selatan, Bandung, Surabaya" value="{{ old('city', $talent->city) }}"
                                    class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
                         </div>
 

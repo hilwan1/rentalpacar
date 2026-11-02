@@ -20,8 +20,8 @@
                 <div class="md:col-span-5 space-y-4 md:sticky md:top-24">
                     <article class="bg-white rounded-3xl overflow-hidden shadow-xs border border-slate-200/80">
                         <div class="relative">
-                            @if ($talent->avatar)
-                                <img src="{{ asset('storage/' . $talent->avatar) }}" alt="{{ $talent->name }}" class="w-full h-80 object-cover object-center" loading="lazy">
+                            @if ($talent->avatar_url)
+                                <img src="{{ $talent->avatar_url }}" alt="{{ $talent->name }}" class="w-full h-80 object-cover object-center" loading="lazy">
                             @else
                                 <div class="w-full h-80 bg-gradient-to-tr from-rose-100 to-rose-50 flex items-center justify-center text-rose-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 opacity-60" fill="currentColor" viewBox="0 0 24 24">
@@ -37,7 +37,17 @@
                         </div>
 
                         <div class="p-6">
-                            <h1 class="text-2xl font-extrabold text-slate-900">{{ $talent->name }}</h1>
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <h1 class="text-2xl font-extrabold text-slate-900">{{ $talent->name }}</h1>
+                                @if ($talent->city)
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                        <svg class="w-3.5 h-3.5 text-rose-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>{{ $talent->city }}</span>
+                                    </span>
+                                @endif
+                            </div>
                             <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
                                 {{ $talent->bio ?? 'Siap menemani harimu dengan obrolan yang menyenangkan, mendengarkan ceritamu, atau bermain game bersama.' }}
                             </p>

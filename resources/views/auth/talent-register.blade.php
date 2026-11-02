@@ -67,6 +67,16 @@
                         </div>
                     </div>
 
+                    <div>
+                        <label for="city" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                            Daerah / Kota Domisili <span class="text-slate-400 font-normal">(Opsional)</span>
+                        </label>
+                        <input type="text" name="city" id="city"
+                               placeholder="Contoh: Jakarta Selatan, Bandung, Surabaya"
+                               value="{{ old('city') }}"
+                               class="w-full text-xs px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition">
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="password" class="block text-xs font-semibold text-slate-700 mb-1.5">

@@ -30,6 +30,7 @@ class TalentDashboardController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'phone' => 'required|string|max:30',
+            'city' => 'nullable|string|max:100',
             'bio' => 'nullable|string|max:500',
             'is_active' => 'nullable|boolean',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -45,6 +46,7 @@ class TalentDashboardController extends Controller
         $updateData = [
             'name' => $validated['name'],
             'phone' => $validated['phone'],
+            'city' => $validated['city'] ?? null,
             'bio' => $validated['bio'] ?? null,
             'is_active' => $request->has('is_active'),
         ];

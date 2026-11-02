@@ -62,6 +62,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|email|max:150|unique:users,email',
             'phone' => 'required|string|max:30',
+            'city' => 'nullable|string|max:100',
             'password' => 'required|string|min:6|confirmed',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
@@ -86,6 +87,7 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
+            'city' => $validated['city'] ?? null,
             'password' => Hash::make($validated['password']),
             'avatar' => $avatarPath,
             'role' => 'talent',

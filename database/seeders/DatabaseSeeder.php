@@ -35,10 +35,12 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => 'talent',
                 'phone' => '081298765432',
+                'city' => 'Jakarta Selatan',
                 'bio' => 'Mahasiswi tingkat akhir yang hobi dengerin musik indie, ngobrol santai seputar kehidupan, dan mabar game. Siap jadi teman cerita yang hangat dan ramah.',
                 'is_active' => true,
             ]
         );
+        $talent->update(['city' => 'Jakarta Selatan']);
 
         // 3. Layanan untuk Talent
         $services = [

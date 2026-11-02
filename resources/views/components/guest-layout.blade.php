@@ -39,15 +39,9 @@
                 <a href="{{ route('home') }}" class="text-sm font-semibold {{ request()->routeIs('home') ? 'text-rose-600' : 'text-slate-600 hover:text-rose-600' }} transition-colors">
                     Beranda
                 </a>
-                <a href="{{ route('talents.index') }}" class="text-sm font-semibold {{ request()->routeIs('talents.*') ? 'text-rose-600' : 'text-slate-600 hover:text-rose-600' }} transition-colors">
-                    Daftar Talent
-                </a>
-                <a href="{{ route('top-talents.index') }}" class="text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition {{ request()->routeIs('top-talents.*') ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100' }}">
+                 <a href="{{ route('top-talents.index') }}" class="text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition {{ request()->routeIs('top-talents.*') ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100' }}">
                     <span>🏆</span>
                     <span>Top Talent</span>
-                </a>
-                <a href="{{ route('testimonials.index') }}" class="text-sm font-semibold {{ request()->routeIs('testimonials.*') ? 'text-rose-600' : 'text-slate-600 hover:text-rose-600' }} transition-colors">
-                    Testimoni
                 </a>
 
                 @auth
@@ -124,24 +118,6 @@
                 <a href="{{ route('home') }}"
                    class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center justify-between {{ request()->routeIs('home') ? 'bg-rose-50 text-rose-600 font-bold' : 'text-slate-700 hover:bg-slate-50' }}">
                     <span>Beranda</span>
-                    <span class="text-xs text-slate-400">→</span>
-                </a>
-                <a href="{{ route('talents.index') }}"
-                   class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center justify-between {{ request()->routeIs('talents.*') ? 'bg-rose-50 text-rose-600 font-bold' : 'text-slate-700 hover:bg-slate-50' }}">
-                    <span>Daftar Talent</span>
-                    <span class="text-xs text-slate-400">→</span>
-                </a>
-                <a href="{{ route('top-talents.index') }}"
-                   class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center justify-between {{ request()->routeIs('top-talents.*') ? 'bg-rose-50 text-rose-600 font-bold' : 'text-slate-700 hover:bg-slate-50' }}">
-                    <span class="flex items-center gap-1.5">
-                        <span>🏆</span>
-                        <span>Top Talent Mingguan</span>
-                    </span>
-                    <span class="text-xs text-slate-400">→</span>
-                </a>
-                <a href="{{ route('testimonials.index') }}"
-                   class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center justify-between {{ request()->routeIs('testimonials.*') ? 'bg-rose-50 text-rose-600 font-bold' : 'text-slate-700 hover:bg-slate-50' }}">
-                    <span>Testimoni Pelanggan</span>
                     <span class="text-xs text-slate-400">→</span>
                 </a>
             </nav>

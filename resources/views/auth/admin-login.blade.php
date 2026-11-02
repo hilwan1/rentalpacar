@@ -44,7 +44,7 @@
                     <div>
                         <label for="email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email Administrator</label>
                         <input type="email" name="email" id="email" required
-                               placeholder="admin@rentalpacar.com"
+                               placeholder="name@email.com"
                                value="{{ old('email') }}"
                                class="w-full text-xs px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition">
                     </div>

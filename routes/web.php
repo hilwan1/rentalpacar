@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminTalentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
@@ -40,15 +42,14 @@ Route::prefix('talent')->name('talent.')->group(function () {
     });
 });
 
-// Autentikasi Admin (Khusus Login)
+// Area Panel Admin
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'showAdminLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'adminLogin'])->name('login.post');
 
-    Route::middleware('auth')->get('/dashboard', function () {
-        if (!auth()->user()->isAdmin()) {
-            abort(403, 'Akses khusus Administrator.');
-        }
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::middleware('auth')->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/talents', [AdminTalentController::class, 'index'])->name('talents.index');
+        Route::post('/talents/{id}/toggle-status', [AdminTalentController::class, 'toggleStatus'])->name('talents.toggle-status');
+    });
 });

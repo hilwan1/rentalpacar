@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'role',
         'phone',
+        'city',
         'avatar',
         'bio',
         'is_active',

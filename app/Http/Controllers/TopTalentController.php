@@ -26,7 +26,8 @@ class TopTalentController extends Controller
             }])
             ->orderByDesc('orders_count')
             ->orderBy('name')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $totalWeeklyOrders = $talents->sum('orders_count');
 

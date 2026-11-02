@@ -60,7 +60,7 @@
                 <div class="space-y-4 mb-10">
                     @foreach ($talents as $index => $talent)
                         @php
-                            $rank = $index + 1;
+                            $rank = ($talents->firstItem() ?? 1) + $index;
                             $isTop1 = $rank === 1 && $talent->orders_count > 0;
                             $isTop2 = $rank === 2 && $talent->orders_count > 0;
                             $isTop3 = $rank === 3 && $talent->orders_count > 0;
@@ -85,8 +85,8 @@
 
                                 <!-- Foto Talent -->
                                 <div class="relative shrink-0">
-                                    @if ($talent->avatar)
-                                        <img src="{{ asset('storage/' . $talent->avatar) }}" alt="{{ $talent->name }}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover object-center border border-slate-200 shadow-xs" loading="lazy">
+                                    @if ($talent->avatar_url)
+                                        <img src="{{ $talent->avatar_url }}" alt="{{ $talent->name }}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover object-center border border-slate-200 shadow-xs" loading="lazy">
                                     @else
                                         <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-100">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 opacity-60" fill="currentColor" viewBox="0 0 24 24">
@@ -106,6 +106,14 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex flex-wrap items-center gap-2">
                                         <h2 class="text-base font-bold text-slate-900 truncate">{{ $talent->name }}</h2>
+                                        @if ($talent->city)
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600">
+                                                <svg class="w-3 h-3 text-rose-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                                </svg>
+                                                <span>{{ $talent->city }}</span>
+                                            </span>
+                                        @endif
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold {{ $talent->orders_count > 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -135,6 +143,11 @@
                             </div>
                         </article>
                     @endforeach
+                </div>
+
+                <!-- Navigasi Halaman (Pagination) -->
+                <div class="mt-8">
+                    {{ $talents->links() }}
                 </div>
             @else
                 <!-- Empty State jika belum ada talent terdaftar -->
