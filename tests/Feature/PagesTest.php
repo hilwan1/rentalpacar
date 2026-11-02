@@ -106,7 +106,7 @@ class PagesTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($talent->name);
         $response->assertSee('Jakarta Selatan');
-        $response->assertSee('Kirim Pesanan ke WhatsApp');
+        $response->assertSee('Pesan');
     }
 
     public function test_order_submission_redirects_to_whatsapp(): void
@@ -1411,5 +1411,22 @@ class PagesTest extends TestCase
         $lockoutResponse->assertSessionHasErrors('email');
         $this->assertStringContainsString('Terlalu banyak percobaan masuk', session('errors')->first('email'));
         $this->assertGuest();
+    }
+
+    public function test_talent_dashboard_renders_tabs_and_components(): void
+    {
+        $talent = User::where('role', 'talent')->firstOrFail();
+
+        $response = $this->actingAs($talent)->get(route('talent.dashboard'));
+
+        $response->assertStatus(200);
+        $response->assertSee('data-tab-target="services"', false);
+        $response->assertSee('data-tab-target="orders"', false);
+        $response->assertSee('data-tab-target="profile"', false);
+        $response->assertSee('data-tab-target="security"', false);
+        $response->assertSee('Tambah Paket Layanan Baru');
+        $response->assertSee('Riwayat Pesanan Masuk');
+        $response->assertSee('Profil & Identitas Talent', false);
+        $response->assertSee('Keamanan & Password', false);
     }
 }

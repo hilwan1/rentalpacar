@@ -1,7 +1,8 @@
 <x-guest-layout title="Dashboard Talent - RentalPacar">
     <div class="w-full bg-white py-8 sm:py-12">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <!-- Top Dashboard Header -->
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Top Dashboard Header / Talent Profile Summary -->
             <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xs border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div class="relative shrink-0">
@@ -36,9 +37,9 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                     <a href="{{ route('talents.show', $talent->id) }}" target="_blank"
-                       class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 transition flex items-center gap-1.5">
+                       class="px-3.5 sm:px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 transition flex items-center gap-1.5 active:scale-95">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -48,7 +49,7 @@
 
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition">
+                        <button type="submit" class="px-3.5 sm:px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition active:scale-95">
                             Keluar
                         </button>
                     </form>
@@ -56,11 +57,11 @@
             </div>
 
             @if (session('success'))
-                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2 shadow-xs">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                     </svg>
-                    <span>{{ session('success') }}</span>
+                    <span class="font-semibold">{{ session('success') }}</span>
                 </div>
             @endif
 
@@ -71,7 +72,7 @@
                     <span class="text-lg font-extrabold {{ $talent->is_active ? 'text-emerald-600' : 'text-slate-500' }} mt-1 block">
                         {{ $talent->is_active ? 'Tersedia untuk Dipesan' : 'Sedang Istirahat' }}
                     </span>
-                    <span class="text-[11px] text-slate-400 mt-1 block">Bisa diubah sewaktu-waktu</span>
+                    <span class="text-[11px] text-slate-400 mt-1 block">Bisa diubah sewaktu-waktu di tab profil</span>
                 </div>
 
                 <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
@@ -85,342 +86,205 @@
                 <div class="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
                     <span class="text-xs font-semibold text-slate-500 block">Total Pesanan Masuk</span>
                     <span class="text-2xl font-extrabold text-slate-900 mt-1 block">
-                        {{ $orders->count() }} Pesanan
+                        {{ $totalOrdersCount ?? $orders->count() }} Pesanan
                     </span>
-                    <span class="text-[11px] text-slate-400 mt-1 block">Diteruskan ke WhatsApp</span>
+                    <span class="text-[11px] text-slate-400 mt-1 block">Diteruskan ke WhatsApp pelanggan</span>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <!-- Kolom Kiri: Profil Saya & Ganti Password (5 Kolom) -->
-                <div class="lg:col-span-5 space-y-6">
-                    <!-- Card 1: Profil Saya -->
-                    <div class="bg-white rounded-3xl p-6 shadow-xs border border-slate-200/80 space-y-4">
-                    <div class="border-b border-slate-100 pb-3">
-                        <h2 class="text-base font-bold text-slate-900">Profil Saya</h2>
-                        <p class="text-xs text-slate-500">Perbarui identitas dan ketersediaan layananmu.</p>
-                    </div>
+            <!-- Tab Navigation Bar (Grid 2x2 di Mobile, Flex 1 Baris di Layar Lebar) -->
+            <div class="bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 grid grid-cols-2 sm:flex sm:items-center gap-1.5" role="tablist">
+                <!-- Tab 1: Paket Layanan -->
+                <button type="button"
+                        id="tab-btn-services"
+                        data-tab-target="services"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="tab-pane-services"
+                        class="talent-tab-btn w-full sm:flex-1 min-h-[44px] flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-95 bg-white text-slate-900 font-extrabold shadow-2xs border border-slate-200/80">
+                    <svg class="w-4 h-4 text-rose-600 tab-icon shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    <span class="truncate">Paket Layanan</span>
+                    <span class="tab-badge px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 shrink-0">
+                        {{ $services->count() }}
+                    </span>
+                </button>
 
-                    <form action="{{ route('talent.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                        @csrf
+                <!-- Tab 2: Pesanan Masuk -->
+                <button type="button"
+                        id="tab-btn-orders"
+                        data-tab-target="orders"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="tab-pane-orders"
+                        class="talent-tab-btn w-full sm:flex-1 min-h-[44px] flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-95 text-slate-600 hover:text-slate-900 hover:bg-white/60 font-semibold border border-transparent">
+                    <svg class="w-4 h-4 text-slate-400 tab-icon shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    <span class="truncate">Pesanan Masuk</span>
+                    <span class="tab-badge px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200/80 text-slate-600 shrink-0">
+                        {{ $totalOrdersCount ?? $orders->count() }}
+                    </span>
+                </button>
 
-                        <!-- Unggah Foto Profil -->
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Foto Profil</label>
-                            <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-200">
-                                <div class="relative shrink-0">
-                                    <img id="avatar-preview"
-                                         src="{{ $talent->avatar_url ?? 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'64\' height=\'64\' fill=\'%23f43f5e\' viewBox=\'0 0 24 24\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>' }}"
-                                         alt="Preview Foto"
-                                         class="w-16 h-16 rounded-2xl object-cover object-center border border-slate-200 bg-white">
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <label for="avatar-input" class="inline-block px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg border border-slate-200 cursor-pointer shadow-xs transition">
-                                        Pilih Foto
-                                    </label>
-                                    <input type="file" name="avatar" id="avatar-input" accept="image/jpeg,image/png,image/webp" class="hidden">
-                                    <p class="text-[11px] text-slate-400 mt-1">Format JPG, PNG, WebP (maks 2MB).</p>
-                                    @if ($talent->avatar)
-                                        <div class="mt-2">
-                                            <label class="inline-flex items-center gap-1.5 text-[11px] text-rose-600 cursor-pointer">
-                                                <input type="checkbox" name="remove_avatar" value="1" class="rounded text-rose-600 focus:ring-rose-500">
-                                                <span>Hapus foto saat ini</span>
-                                            </label>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                            @error('avatar')
-                                <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                <!-- Tab 3: Profil Saya -->
+                <button type="button"
+                        id="tab-btn-profile"
+                        data-tab-target="profile"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="tab-pane-profile"
+                        class="talent-tab-btn w-full sm:flex-1 min-h-[44px] flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-95 text-slate-600 hover:text-slate-900 hover:bg-white/60 font-semibold border border-transparent">
+                    <svg class="w-4 h-4 text-slate-400 tab-icon shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span class="truncate">Profil Saya</span>
+                </button>
 
-                        <div>
-                            <label for="name" class="block text-xs font-semibold text-slate-700 mb-1">Nama Panggung / Tampilan</label>
-                            <input type="text" name="name" id="name" required value="{{ old('name', $talent->name) }}"
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
-                        </div>
+                <!-- Tab 4: Keamanan & Password -->
+                <button type="button"
+                        id="tab-btn-security"
+                        data-tab-target="security"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="tab-pane-security"
+                        class="talent-tab-btn w-full sm:flex-1 min-h-[44px] flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-95 text-slate-600 hover:text-slate-900 hover:bg-white/60 font-semibold border border-transparent">
+                    <svg class="w-4 h-4 text-slate-400 tab-icon shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span class="truncate">Keamanan</span>
+                </button>
+            </div>
 
-                        <div>
-                            <label for="email" class="block text-xs font-semibold text-slate-700 mb-1">Email (Akun Login)</label>
-                            <input type="email" id="email" disabled value="{{ $talent->email }}"
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-500">
-                        </div>
-
-                        <div>
-                            <label for="phone" class="block text-xs font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
-                            <input type="tel" name="phone" id="phone" required value="{{ old('phone', $talent->phone) }}"
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
-                        </div>
-
-                        <div>
-                            <label for="city" class="block text-xs font-semibold text-slate-700 mb-1">Daerah / Kota Domisili</label>
-                            <input type="text" name="city" id="city" placeholder="Contoh: Jakarta Selatan, Bandung, Surabaya" value="{{ old('city', $talent->city) }}"
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
-                        </div>
-
-                        <div>
-                            <label for="bio" class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi & Bio Singkat</label>
-                            <textarea name="bio" id="bio" rows="3"
-                                      placeholder="Ceritakan hobi, kepribadian, atau topik obrolan favoritmu..."
-                                      class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">{{ old('bio', $talent->bio) }}</textarea>
-                        </div>
-
-                        <div class="pt-2">
-                            <label class="flex items-center gap-2.5 p-3 rounded-xl bg-rose-50/60 border border-rose-100 cursor-pointer">
-                                <input type="checkbox" name="is_active" value="1" {{ $talent->is_active ? 'checked' : '' }}
-                                       class="w-4 h-4 rounded text-rose-600 border-slate-300 focus:ring-rose-500">
-                                <div>
-                                    <span class="text-xs font-bold text-slate-800 block">Status Ketersediaan Publik</span>
-                                    <span class="text-[11px] text-slate-500">Centang agar profilmu tampil di katalog dan dapat dipesan pelanggan.</span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <button type="submit"
-                                class="w-full py-3 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md shadow-rose-600/20 transition">
-                            Simpan Perubahan Profil
-                        </button>
-                    </form>
+            <!-- Tab Content Panels -->
+            <div class="tab-panels-wrapper">
+                <!-- Pane 1: Paket Layanan -->
+                <div id="tab-pane-services" role="tabpanel" aria-labelledby="tab-btn-services" class="talent-tab-pane">
+                    <x-talent.services-tab :talent="$talent" :services="$services" />
                 </div>
 
-                <!-- Card 2: Ganti Password Akun Talent -->
-                <div class="bg-white rounded-3xl p-6 shadow-xs border border-slate-200/80 space-y-4">
-                    <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
-                        <div>
-                            <h2 class="text-base font-bold text-slate-900">Ganti Password Akun</h2>
-                            <p class="text-xs text-slate-500">Perbarui kata sandi untuk login akun talent kamu.</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </div>
-                    </div>
+                <!-- Pane 2: Pesanan Masuk -->
+                <div id="tab-pane-orders" role="tabpanel" aria-labelledby="tab-btn-orders" class="talent-tab-pane hidden">
+                    <x-talent.orders-tab :talent="$talent" :orders="$orders" :total-orders-count="$totalOrdersCount ?? $orders->count()" />
+                </div>
 
-                    @if ($errors->has('current_password') || $errors->has('password'))
-                        <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
-                            @error('current_password')
-                                <p class="font-medium">• {{ $message }}</p>
-                            @enderror
-                            @error('password')
-                                <p class="font-medium">• {{ $message }}</p>
-                            @enderror
-                        </div>
-                    @endif
+                <!-- Pane 3: Profil Saya -->
+                <div id="tab-pane-profile" role="tabpanel" aria-labelledby="tab-btn-profile" class="talent-tab-pane hidden">
+                    <x-talent.profile-tab :talent="$talent" />
+                </div>
 
-                    <form action="{{ route('talent.password.update') }}" method="POST" class="space-y-4">
-                        @csrf
-
-                        <div>
-                            <label for="current_password" class="block text-xs font-semibold text-slate-700 mb-1">
-                                Password Saat Ini <span class="text-rose-600">*</span>
-                            </label>
-                            <input type="password"
-                                   name="current_password"
-                                   id="current_password"
-                                   required
-                                   placeholder="Masukkan password saat ini"
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 @error('current_password') border-rose-400 bg-rose-50/40 @enderror">
-                        </div>
-
-                        <div>
-                            <label for="new_password" class="block text-xs font-semibold text-slate-700 mb-1">
-                                Password Baru <span class="text-rose-600">*</span>
-                            </label>
-                            <input type="password"
-                                   name="password"
-                                   id="new_password"
-                                   required
-                                   placeholder="Minimal 6 karakter"
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 @error('password') border-rose-400 bg-rose-50/40 @enderror">
-                        </div>
-
-                        <div>
-                            <label for="password_confirmation" class="block text-xs font-semibold text-slate-700 mb-1">
-                                Konfirmasi Password Baru <span class="text-rose-600">*</span>
-                            </label>
-                            <input type="password"
-                                   name="password_confirmation"
-                                   id="password_confirmation"
-                                   required
-                                   placeholder="Ulangi password baru"
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
-                        </div>
-
-                        <button type="submit"
-                                class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold rounded-xl transition shadow-xs">
-                            Perbarui Password
-                        </button>
-                    </form>
+                <!-- Pane 4: Keamanan & Password -->
+                <div id="tab-pane-security" role="tabpanel" aria-labelledby="tab-btn-security" class="talent-tab-pane hidden">
+                    <x-talent.security-tab :talent="$talent" />
                 </div>
             </div>
 
-                <!-- Kolom Kanan: Manajemen Paket Layanan & Tarif (7 Kolom) -->
-                <div class="lg:col-span-7 space-y-6">
-                    <!-- Form Tambah Paket Layanan -->
-                    <div class="bg-white rounded-3xl p-6 shadow-xs border border-slate-200/80">
-                        <div class="border-b border-slate-100 pb-3 mb-4">
-                            <h2 class="text-base font-bold text-slate-900">Tambah Paket Layanan Baru</h2>
-                            <p class="text-xs text-slate-500">Tentukan nama layanan, durasi, dan tarif yang kamu inginkan.</p>
-                        </div>
-
-                        <form action="{{ route('talent.services.store') }}" method="POST" class="space-y-4">
-                            @csrf
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="service_name" class="block text-xs font-semibold text-slate-700 mb-1">Nama Layanan</label>
-                                    <input type="text" name="service_name" id="service_name" required placeholder="Contoh: Chat Seharian, Voice Call 1 Jam"
-                                           class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
-                                </div>
-
-                                <div>
-                                    <label for="duration" class="block text-xs font-semibold text-slate-700 mb-1">Durasi</label>
-                                    <input type="text" name="duration" id="duration" required placeholder="Contoh: 60 Menit, 1 Hari, 2 Match"
-                                           class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="price" class="block text-xs font-semibold text-slate-700 mb-1">Tarif (Rupiah)</label>
-                                    <input type="number" name="price" id="price" required min="5000" step="5000" placeholder="Contoh: 35000"
-                                           class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
-                                </div>
-
-                                <div>
-                                    <label for="description" class="block text-xs font-semibold text-slate-700 mb-1">Keterangan Singkat (Opsional)</label>
-                                    <input type="text" name="description" id="description" placeholder="Penjelasan singkat paket..."
-                                           class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500">
-                                </div>
-                            </div>
-
-                            <button type="submit"
-                                    class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition">
-                                + Tambahkan Paket Layanan
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Daftar Layanan Yang Ada -->
-                    <div class="bg-white rounded-3xl p-6 shadow-xs border border-slate-200/80">
-                        <div class="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
-                            <div>
-                                <h2 class="text-base font-bold text-slate-900">Daftar Paket Layanan Milikmu</h2>
-                                <p class="text-xs text-slate-500">Kelola status aktif atau nonaktif paket layanan.</p>
-                            </div>
-                            <span class="text-xs font-bold text-slate-600">{{ $services->count() }} Paket</span>
-                        </div>
-
-                        @if ($services->isNotEmpty())
-                            <div class="space-y-3">
-                                @foreach ($services as $srv)
-                                    <div class="p-4 rounded-2xl border {{ $srv->is_active ? 'border-slate-200/80 bg-white' : 'border-slate-100 bg-slate-50/70 opacity-70' }} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                        <div>
-                                            <div class="flex items-center gap-2">
-                                                <h3 class="text-xs font-bold text-slate-900">{{ $srv->service_name }}</h3>
-                                                <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $srv->is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-200 text-slate-600' }}">
-                                                    {{ $srv->is_active ? 'Aktif' : 'Nonaktif' }}
-                                                </span>
-                                                <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md">
-                                                    {{ $srv->duration }}
-                                                </span>
-                                            </div>
-                                            @if ($srv->description)
-                                                <p class="text-[11px] text-slate-500 mt-1">{{ $srv->description }}</p>
-                                            @endif
-                                            <span class="text-xs font-extrabold text-rose-600 mt-1 block">
-                                                Rp {{ number_format($srv->price, 0, ',', '.') }}
-                                            </span>
-                                        </div>
-
-                                        <div class="flex items-center gap-2 shrink-0">
-                                            <form action="{{ route('talent.services.toggle', $srv->id) }}" method="POST">
-                                                @csrf
-                                                <button type="submit"
-                                                        class="text-xs font-bold px-3 py-1.5 rounded-xl transition {{ $srv->is_active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200' }}">
-                                                    {{ $srv->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
-                                                </button>
-                                            </form>
-
-                                            <form action="{{ route('talent.services.destroy', $srv->id) }}" method="POST" onsubmit="return confirm('Apakah kamu yakin ingin menghapus paket layanan {{ $srv->service_name }}?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                        class="p-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 transition"
-                                                        title="Hapus paket layanan">
-                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <div class="p-8 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-center">
-                                <p class="text-xs font-semibold text-slate-700">Kamu belum menambahkan paket layanan.</p>
-                                <p class="text-[11px] text-slate-500 mt-1">Gunakan formulir di atas untuk mulai menambahkan tarif layananmu.</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pesanan Masuk Terbaru Untuk Talent Ini -->
-            <div class="bg-white rounded-3xl p-6 shadow-xs border border-slate-200/80">
-                <div class="border-b border-slate-100 pb-3 mb-4">
-                    <h2 class="text-base font-bold text-slate-900">Riwayat Pesanan Masuk</h2>
-                    <p class="text-xs text-slate-500">Daftar pelanggan yang telah mengisi form pemesanan layananmu.</p>
-                </div>
-
-                @if ($orders->isNotEmpty())
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead>
-                                <tr class="text-slate-400 border-b border-slate-100 pb-2">
-                                    <th class="py-2.5 font-semibold">Kode Pesanan</th>
-                                    <th class="py-2.5 font-semibold">Nama Pemesan</th>
-                                    <th class="py-2.5 font-semibold">Paket Layanan</th>
-                                    <th class="py-2.5 font-semibold">Jadwal Booking</th>
-                                    <th class="py-2.5 font-semibold">Waktu Masuk</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                @foreach ($orders as $order)
-                                    <tr>
-                                        <td class="py-3 font-mono font-bold text-rose-600">{{ $order->order_code }}</td>
-                                        <td class="py-3 font-semibold text-slate-800">{{ $order->customer_name }}</td>
-                                        <td class="py-3 text-slate-700">{{ $order->service_name_snapshot }}</td>
-                                        <td class="py-3 text-slate-600">{{ $order->booking_schedule->translatedFormat('d M Y, H:i') }} WIB</td>
-                                        <td class="py-3 text-slate-400 text-[11px]">{{ $order->created_at->diffForHumans() }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <div class="p-8 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                        <p class="text-xs font-semibold text-slate-700">Belum ada pesanan masuk.</p>
-                        <p class="text-[11px] text-slate-500 mt-1">Pesanan yang disubmit oleh pelanggan akan otomatis tercatat di sini.</p>
-                    </div>
-                @endif
-            </div>
         </div>
     </div>
 
+    <!-- Script Tab Switching & Avatar Preview -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('avatar-input');
-            const preview = document.getElementById('avatar-preview');
-            if (input && preview) {
-                input.addEventListener('change', (e) => {
+            const tabButtons = document.querySelectorAll('.talent-tab-btn');
+            const tabPanes = document.querySelectorAll('.talent-tab-pane');
+
+            function activateTab(targetTabId) {
+                const targetBtn = document.querySelector(`[data-tab-target="${targetTabId}"]`);
+                const targetPane = document.getElementById(`tab-pane-${targetTabId}`);
+
+                if (!targetBtn || !targetPane) return;
+
+                // Deactivate all buttons
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('bg-white', 'text-slate-900', 'font-extrabold', 'shadow-2xs', 'border-slate-200/80');
+                    btn.classList.add('text-slate-600', 'font-semibold', 'border-transparent');
+                    btn.setAttribute('aria-selected', 'false');
+
+                    const icon = btn.querySelector('.tab-icon');
+                    if (icon) {
+                        icon.classList.remove('text-rose-600');
+                        icon.classList.add('text-slate-400');
+                    }
+
+                    const badge = btn.querySelector('.tab-badge');
+                    if (badge) {
+                        badge.classList.remove('bg-rose-50', 'text-rose-700');
+                        badge.classList.add('bg-slate-200/80', 'text-slate-600');
+                    }
+                });
+
+                // Deactivate all panes
+                tabPanes.forEach(pane => {
+                    pane.classList.add('hidden');
+                });
+
+                // Activate selected button
+                targetBtn.classList.remove('text-slate-600', 'font-semibold', 'border-transparent');
+                targetBtn.classList.add('bg-white', 'text-slate-900', 'font-extrabold', 'shadow-2xs', 'border-slate-200/80');
+                targetBtn.setAttribute('aria-selected', 'true');
+
+                const activeIcon = targetBtn.querySelector('.tab-icon');
+                if (activeIcon) {
+                    activeIcon.classList.remove('text-slate-400');
+                    activeIcon.classList.add('text-rose-600');
+                }
+
+                const activeBadge = targetBtn.querySelector('.tab-badge');
+                if (activeBadge) {
+                    activeBadge.classList.remove('bg-slate-200/80', 'text-slate-600');
+                    activeBadge.classList.add('bg-rose-50', 'text-rose-700');
+                }
+
+                // Show selected pane
+                targetPane.classList.remove('hidden');
+
+                // Update hash without jumping
+                if (history.replaceState) {
+                    history.replaceState(null, null, `#${targetTabId}`);
+                }
+            }
+
+            // Click listener
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = btn.getAttribute('data-tab-target');
+                    if (target) activateTab(target);
+                });
+            });
+
+            // Initial Tab Selection based on Server Errors or URL
+            @if ($errors->has('current_password') || $errors->has('password'))
+                activateTab('security');
+            @elseif ($errors->has('name') || $errors->has('phone') || $errors->has('city') || $errors->has('bio') || $errors->has('avatar'))
+                activateTab('profile');
+            @elseif ($errors->has('service_name') || $errors->has('duration') || $errors->has('price') || $errors->has('description'))
+                activateTab('services');
+            @else
+                const urlParams = new URLSearchParams(window.location.search);
+                const queryTab = urlParams.get('tab');
+                const hashTab = window.location.hash.replace('#', '');
+                const validTabs = ['services', 'orders', 'profile', 'security'];
+
+                if (queryTab && validTabs.includes(queryTab)) {
+                    activateTab(queryTab);
+                } else if (hashTab && validTabs.includes(hashTab)) {
+                    activateTab(hashTab);
+                } else {
+                    activateTab('services');
+                }
+            @endif
+
+            // Photo Preview Handler (Profile Tab)
+            const avatarInput = document.getElementById('avatar-input');
+            const avatarPreview = document.getElementById('avatar-preview');
+            if (avatarInput && avatarPreview) {
+                avatarInput.addEventListener('change', (e) => {
                     const file = e.target.files[0];
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = (event) => {
-                            preview.src = event.target.result;
+                            avatarPreview.src = event.target.result;
                         };
                         reader.readAsDataURL(file);
                     }

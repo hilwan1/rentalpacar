@@ -22,8 +22,8 @@ class AdminDashboardController extends Controller
         $activeTalents = User::where('role', 'talent')->where('is_active', true)->count();
         $totalTestimonials = Testimonial::count();
 
-        $recentOrders = Order::with('talent')->latest()->take(10)->get();
-        $talents = User::where('role', 'talent')->withCount('orders')->latest()->take(10)->get();
+        $recentOrders = Order::with('talent')->latest()->take(5)->get();
+        $talents = User::where('role', 'talent')->withCount('orders')->latest()->take(5)->get();
 
         return view('admin.dashboard', compact(
             'totalOrders',

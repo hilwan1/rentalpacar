@@ -19,9 +19,10 @@ class TalentDashboardController extends Controller
         }
 
         $services = Service::where('talent_id', $talent->id)->latest()->get();
-        $orders = $talent->orders()->with('service')->latest()->take(10)->get();
+        $totalOrdersCount = $talent->orders()->count();
+        $orders = $talent->orders()->with('service')->latest()->take(5)->get();
 
-        return view('talent.dashboard', compact('talent', 'services', 'orders'));
+        return view('talent.dashboard', compact('talent', 'services', 'orders', 'totalOrdersCount'));
     }
 
     public function updateProfile(Request $request)
