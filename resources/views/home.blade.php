@@ -44,7 +44,7 @@
                 </a>
 
                 <!-- Button 3: Hubungi WhatsApp Admin -->
-                <a href="https://wa.me/{{ config('services.whatsapp.admin_number', env('WHATSAPP_ADMIN_NUMBER', '6281234567890')) }}?text={{ rawurlencode('Halo Admin RentalPacar, saya ingin tanya-tanya seputar layanan teman kencan virtual.') }}"
+                <a href="https://wa.me/{{ \App\Models\Setting::get('whatsapp_home_number', config('services.whatsapp.admin_number', env('WHATSAPP_ADMIN_NUMBER', '6281234567890'))) }}?text={{ rawurlencode('Halo Admin RentalPacar, saya ingin tanya-tanya seputar layanan teman kencan virtual.') }}"
                    target="_blank"
                    rel="noopener noreferrer"
                    class="w-full py-4 px-6 bg-rose-50 hover:bg-rose-100 active:scale-[0.98] text-rose-800 border border-rose-200 font-semibold rounded-2xl shadow-xs flex items-center justify-center gap-3 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2">

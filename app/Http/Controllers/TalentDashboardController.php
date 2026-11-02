@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class TalentDashboardController extends Controller
@@ -68,6 +69,35 @@ class TalentDashboardController extends Controller
         return back()->with('success', 'Profil dan foto profil berhasil diperbarui!');
     }
 
+    public function updatePassword(Request $request)
+    {
+        $talent = Auth::user();
+
+        if (!$talent->isTalent()) {
+            abort(403, 'Akses khusus Talent.');
+        }
+
+        $validated = $request->validate([
+            'current_password' => ['required', 'string', 'max:255', 'current_password'],
+            'password' => ['required', 'string', 'min:6', 'max:255', 'confirmed'],
+        ], [
+            'current_password.required' => 'Password saat ini wajib diisi.',
+            'current_password.current_password' => 'Password saat ini yang kamu masukkan salah.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password baru minimal 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+        ]);
+
+        $talent->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
+
+        return back()->with('success', 'Password akun talent berhasil diubah!');
+    }
+
     public function storeService(Request $request)
     {
         $talent = Auth::user();
@@ -102,6 +132,22 @@ class TalentDashboardController extends Controller
 
         $statusText = $service->is_active ? 'diaktifkan' : 'dinonaktifkan';
         return back()->with('success', "Layanan {$service->service_name} berhasil {$statusText}!");
+    }
+
+    public function destroyService($id)
+    {
+        $talent = Auth::user();
+        $service = Service::where('id', $id)->where('talent_id', $talent->id)->firstOrFail();
+        $serviceName = $service->service_name;
+
+        if ($service->orders()->exists()) {
+            $service->update(['is_active' => false]);
+            return back()->with('success', "Paket layanan {$serviceName} memiliki riwayat transaksi pelanggan, sehingga statusnya dinonaktifkan.");
+        }
+
+        $service->delete();
+
+        return back()->with('success', "Paket layanan {$serviceName} berhasil dihapus.");
     }
 }
 

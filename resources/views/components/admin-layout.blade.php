@@ -58,9 +58,9 @@
                             <span>Dashboard Ringkasan</span>
                         </a>
 
-                        <a href="#section-pesanan"
-                           class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
-                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <a href="{{ route('admin.orders.index') }}"
+                           class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition {{ request()->routeIs('admin.orders.*') ? 'bg-rose-50 text-rose-600 font-bold shadow-xs' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                            <svg class="w-4 h-4 {{ request()->routeIs('admin.orders.*') ? 'text-rose-600' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
                             <span>Pesanan Masuk</span>
@@ -74,12 +74,28 @@
                             <span>Daftar Akun Talent</span>
                         </a>
 
-                        <a href="{{ route('testimonials.index') }}" target="_blank"
-                           class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
-                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <a href="{{ route('admin.testimonials.index') }}"
+                           class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition {{ request()->routeIs('admin.testimonials.*') ? 'bg-rose-50 text-rose-600 font-bold shadow-xs' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                            <svg class="w-4 h-4 {{ request()->routeIs('admin.testimonials.*') ? 'text-rose-600' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
-                            <span>Testimoni Publik</span>
+                            <span>Kelola Testimoni</span>
+                        </a>
+
+                        <a href="{{ route('admin.settings.whatsapp') }}"
+                           class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition {{ request()->routeIs('admin.settings.whatsapp*') ? 'bg-rose-50 text-rose-600 font-bold shadow-xs' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                            <svg class="w-4 h-4 {{ request()->routeIs('admin.settings.whatsapp*') ? 'text-rose-600' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <span>Pengaturan WhatsApp</span>
+                        </a>
+
+                        <a href="{{ route('admin.profile.edit') }}"
+                           class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition {{ request()->routeIs('admin.profile.*') ? 'bg-rose-50 text-rose-600 font-bold shadow-xs' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                            <svg class="w-4 h-4 {{ request()->routeIs('admin.profile.*') ? 'text-rose-600' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span>Profil & Password</span>
                         </a>
                     </div>
                 </div>
@@ -110,6 +126,17 @@
                             </span>
                             <span class="text-[10px] text-slate-400">↗</span>
                         </a>
+
+                        <a href="{{ route('testimonials.index') }}" target="_blank"
+                           class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                            <span class="flex items-center gap-3">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                <span>Lihat Testimoni Publik</span>
+                            </span>
+                            <span class="text-[10px] text-slate-400">↗</span>
+                        </a>
                     </div>
                 </div>
             </nav>
@@ -117,15 +144,19 @@
 
         <!-- Sidebar Footer / Admin Info & Logout -->
         <div class="p-4 border-t border-slate-100 bg-slate-50/50">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0">
-                    AD
+            <a href="{{ route('admin.profile.edit') }}"
+               class="group flex items-center gap-3 mb-3 p-2 -mx-2 rounded-xl hover:bg-white border border-transparent hover:border-slate-200 transition">
+                <div class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 group-hover:bg-rose-600 transition">
+                    {{ strtoupper(substr(auth()->user()->name ?? 'AD', 0, 2)) }}
                 </div>
                 <div class="min-w-0 flex-1">
-                    <p class="text-xs font-bold text-slate-900 truncate">{{ auth()->user()->name }}</p>
+                    <p class="text-xs font-bold text-slate-900 truncate group-hover:text-rose-600 transition">{{ auth()->user()->name }}</p>
                     <p class="text-[11px] text-slate-500 truncate">{{ auth()->user()->email }}</p>
                 </div>
-            </div>
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-rose-600 transition shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
 
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
@@ -173,6 +204,17 @@
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span class="text-xs font-medium text-slate-600 hidden sm:inline">Admin Online</span>
                 </div>
+
+                <a href="{{ route('admin.profile.edit') }}"
+                   class="inline-flex items-center gap-2 p-1 sm:px-2.5 sm:py-1 rounded-full hover:bg-slate-100 border border-slate-200/80 transition group"
+                   title="Kelola Profil Administrator">
+                    <div class="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[10px] group-hover:bg-rose-600 transition">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'AD', 0, 2)) }}
+                    </div>
+                    <span class="text-xs font-semibold text-slate-700 hidden sm:inline max-w-[120px] truncate group-hover:text-rose-600 transition">
+                        {{ auth()->user()->name }}
+                    </span>
+                </a>
             </div>
         </header>
 

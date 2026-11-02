@@ -49,16 +49,26 @@ class OrderController extends Controller
             'price_snapshot' => $service->price,
         ]);
 
-        $adminWa = config('services.whatsapp.admin_number', env('WHATSAPP_ADMIN_NUMBER', '6281234567890'));
-        $scheduleFormatted = Carbon::parse($order->booking_schedule)->translatedFormat('d F Y, H:i');
+        return redirect()->route('orders.show', $order->order_code)->with('just_created', true);
+    }
+
+    public function show(string $order_code)
+    {
+        $order = Order::with(['talent', 'service'])
+            ->where('order_code', $order_code)
+            ->firstOrFail();
+
+        $adminWa = \App\Models\Setting::get('whatsapp_order_number', config('services.whatsapp.admin_number', env('WHATSAPP_ADMIN_NUMBER', '6281234567890')));
+        $scheduleFormatted = Carbon::parse($order->booking_schedule)->translatedFormat('l, d F Y - H:i');
         $priceFormatted = 'Rp ' . number_format($order->price_snapshot, 0, ',', '.');
+        $duration = $order->service ? $order->service->duration : null;
 
         $message = "Halo Admin RentalPacar, saya ingin konfirmasi pesanan dengan detail berikut:\n\n"
             . "• Kode Pesanan: *{$order->order_code}*\n"
             . "• Nama: {$order->customer_name}\n"
             . "• No WhatsApp: {$order->customer_whatsapp}\n"
-            . "• Talent: {$talent->name}\n"
-            . "• Layanan: {$order->service_name_snapshot} ({$service->duration})\n"
+            . "• Talent: {$order->talent->name}\n"
+            . "• Layanan: {$order->service_name_snapshot}" . ($duration ? " ({$duration})" : "") . "\n"
             . "• Tarif: {$priceFormatted}\n"
             . "• Jadwal: {$scheduleFormatted} WIB\n"
             . ($order->notes ? "• Catatan: {$order->notes}\n\n" : "\n")
@@ -66,7 +76,7 @@ class OrderController extends Controller
 
         $waUrl = "https://wa.me/{$adminWa}?text=" . rawurlencode($message);
 
-        return redirect()->away($waUrl);
+        return view('orders.show', compact('order', 'waUrl', 'message', 'adminWa', 'scheduleFormatted', 'priceFormatted', 'duration'));
     }
 }
 

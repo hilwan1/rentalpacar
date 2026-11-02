@@ -30,5 +30,18 @@ class Testimonial extends Model
     {
         return $this->belongsTo(User::class, 'talent_id');
     }
+
+    public function getScreenshotUrlAttribute(): ?string
+    {
+        if (!$this->screenshot_path) {
+            return null;
+        }
+
+        if (str_starts_with($this->screenshot_path, 'http://') || str_starts_with($this->screenshot_path, 'https://')) {
+            return $this->screenshot_path;
+        }
+
+        return asset('storage/' . $this->screenshot_path);
+    }
 }
 

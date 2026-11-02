@@ -56,10 +56,10 @@
                                 </blockquote>
 
                                 <!-- Screenshot Percakapan (Jika Ada) -->
-                                @if ($item->screenshot_path)
+                                @if ($item->screenshot_url)
                                     <div class="mt-2 mb-3">
-                                        <a href="{{ asset('storage/' . $item->screenshot_path) }}" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-xl border border-slate-200 hover:opacity-95 transition">
-                                            <img src="{{ asset('storage/' . $item->screenshot_path) }}" alt="Bukti chat testimoni {{ $item->customer_alias }}" class="w-full h-auto max-h-56 object-cover object-top" loading="lazy">
+                                        <a href="{{ $item->screenshot_url }}" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-xl border border-slate-200 hover:opacity-95 transition">
+                                            <img src="{{ $item->screenshot_url }}" alt="Bukti chat testimoni {{ $item->customer_alias }}" class="w-full h-auto max-h-56 object-cover object-top" loading="lazy">
                                         </a>
                                     </div>
                                 @endif

@@ -14,17 +14,27 @@
                 </p>
             </div>
 
-            <!-- Metrik Ringkas Talent -->
-            <div class="flex flex-wrap items-center gap-2.5">
-                <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold">
-                    Total: <strong class="text-slate-900">{{ $totalTalents }}</strong>
-                </span>
-                <span class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
-                    Aktif: <strong>{{ $activeCount }}</strong>
-                </span>
-                <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-semibold">
-                    Nonaktif: <strong>{{ $inactiveCount }}</strong>
-                </span>
+            <!-- Metrik Ringkas Talent & Tombol Tambah -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold">
+                        Total: <strong class="text-slate-900">{{ $totalTalents }}</strong>
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+                        Aktif: <strong>{{ $activeCount }}</strong>
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-semibold">
+                        Nonaktif: <strong>{{ $inactiveCount }}</strong>
+                    </span>
+                </div>
+
+                <a href="{{ route('admin.talents.create') }}"
+                   class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md shadow-rose-600/25 transition inline-flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span>Tambah Talent Baru</span>
+                </a>
             </div>
         </div>
 
@@ -189,6 +199,16 @@
                                                 @endif
                                             </form>
 
+                                            <!-- Tombol Edit Profil & Layanan -->
+                                            <a href="{{ route('admin.talents.edit', $talent->id) }}"
+                                               class="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 transition active:scale-95 inline-flex items-center gap-1.5 shadow-2xs"
+                                               title="Edit profil dan paket layanan talent">
+                                                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                                <span>Edit</span>
+                                            </a>
+
                                             <!-- Tombol Lihat Profil Publik -->
                                             <a href="{{ route('talents.show', $talent->id) }}" target="_blank"
                                                class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
@@ -227,6 +247,13 @@
                     @if (!empty($search) || $status !== 'all')
                         <a href="{{ route('admin.talents.index') }}" class="inline-block mt-4 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition">
                             Reset Filter Pencarian
+                        </a>
+                    @else
+                        <a href="{{ route('admin.talents.create') }}" class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition shadow-xs">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>Tambah Talent Pertama</span>
                         </a>
                     @endif
                 </div>

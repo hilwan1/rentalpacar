@@ -111,9 +111,14 @@
                         <h2 class="text-base font-bold text-slate-900">Pesanan Masuk Terbaru</h2>
                         <p class="text-xs text-slate-500">Daftar transaksi pemesanan yang diteruskan pelanggan ke WhatsApp.</p>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 text-[11px] font-bold">
-                        {{ $recentOrders->count() }} Data Terbaru
-                    </span>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 text-[11px] font-bold">
+                            {{ $recentOrders->count() }} Data Terbaru
+                        </span>
+                        <a href="{{ route('admin.orders.index') }}" class="text-xs text-rose-600 hover:text-rose-700 font-bold hover:underline transition">
+                            Lihat Semua →
+                        </a>
+                    </div>
                 </div>
 
                 @if ($recentOrders->isNotEmpty())

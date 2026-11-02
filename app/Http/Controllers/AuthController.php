@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    private const MAX_LOGIN_ATTEMPTS = 5;
+    private const LOCKOUT_DECAY_SECONDS = 60;
+
     public function showLoginForm()
     {
         return redirect()->route('talent.login');
@@ -28,19 +35,24 @@ class AuthController extends Controller
     public function talentLogin(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => 'required|email|max:150',
+            'password' => 'required|string|max:255',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        $email = strtolower(trim($credentials['email']));
+        $throttleKey = $this->throttleKey($request, 'talent-login', $email);
 
-            if (Auth::user()->isAdmin()) {
-                return redirect()->intended(route('admin.dashboard'));
-            }
+        $this->ensureIsNotRateLimited($request, $throttleKey);
+
+        if (Auth::attempt(['email' => $email, 'password' => $credentials['password'], 'role' => 'talent'], $request->boolean('remember'))) {
+            RateLimiter::clear($throttleKey);
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
 
             return redirect()->intended(route('talent.dashboard'));
         }
+
+        RateLimiter::hit($throttleKey, self::LOCKOUT_DECAY_SECONDS);
 
         return back()->withErrors([
             'email' => 'Kombinasi email atau kata sandi tidak cocok.',
@@ -63,7 +75,7 @@ class AuthController extends Controller
             'email' => 'required|email|max:150|unique:users,email',
             'phone' => 'required|string|max:30',
             'city' => 'nullable|string|max:100',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6|max:255|confirmed',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'name.required' => 'Nama atau nama panggung wajib diisi.',
@@ -84,10 +96,10 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'city' => $validated['city'] ?? null,
+            'name' => trim($validated['name']),
+            'email' => strtolower(trim($validated['email'])),
+            'phone' => trim($validated['phone']),
+            'city' => isset($validated['city']) ? trim($validated['city']) : null,
             'password' => Hash::make($validated['password']),
             'avatar' => $avatarPath,
             'role' => 'talent',
@@ -96,6 +108,7 @@ class AuthController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+        $request->session()->regenerateToken();
 
         return redirect()->route('talent.dashboard')->with('success', 'Pendaftaran berhasil! Selamat datang di RentalPacar.');
     }
@@ -114,25 +127,24 @@ class AuthController extends Controller
     public function adminLogin(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => 'required|email|max:150',
+            'password' => 'required|string|max:255',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        $email = strtolower(trim($credentials['email']));
+        $throttleKey = $this->throttleKey($request, 'admin-login', $email);
+
+        $this->ensureIsNotRateLimited($request, $throttleKey);
+
+        if (Auth::attempt(['email' => $email, 'password' => $credentials['password'], 'role' => 'admin'], $request->boolean('remember'))) {
+            RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
-
-            if (!Auth::user()->isAdmin()) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return back()->withErrors([
-                    'email' => 'Akun ini bukan akun administrator.',
-                ])->onlyInput('email');
-            }
+            $request->session()->regenerateToken();
 
             return redirect()->intended(route('admin.dashboard'));
         }
+
+        RateLimiter::hit($throttleKey, self::LOCKOUT_DECAY_SECONDS);
 
         return back()->withErrors([
             'email' => 'Kombinasi email atau kata sandi admin tidak cocok.',
@@ -146,5 +158,25 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home');
+    }
+
+    private function throttleKey(Request $request, string $portal, string $email): string
+    {
+        return Str::transliterate($portal . '|' . $email . '|' . $request->ip());
+    }
+
+    private function ensureIsNotRateLimited(Request $request, string $throttleKey): void
+    {
+        if (!RateLimiter::tooManyAttempts($throttleKey, self::MAX_LOGIN_ATTEMPTS)) {
+            return;
+        }
+
+        event(new Lockout($request));
+
+        $seconds = RateLimiter::availableIn($throttleKey);
+
+        throw ValidationException::withMessages([
+            'email' => "Terlalu banyak percobaan masuk yang gagal. Silakan coba lagi dalam {$seconds} detik.",
+        ]);
     }
 }

@@ -180,7 +180,7 @@
                                 <span>Kirim Pesanan ke WhatsApp</span>
                             </button>
                             <p class="text-xs text-center text-slate-500 mt-2.5">
-                                Kode pesanan unik akan otomatis dibuat dan diteruskan ke chat admin WhatsApp resmi kami.
+                                Kode pesanan akan dibuat otomatis dan kamu dapat memeriksa rincian tiket sebelum konfirmasi ke WhatsApp.
                             </p>
                         </div>
                     </form>
