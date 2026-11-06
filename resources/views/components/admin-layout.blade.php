@@ -26,9 +26,7 @@
             <!-- Sidebar Header & Brand -->
             <div class="h-16 px-5 border-b border-slate-100 flex items-center justify-between">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-rose-600 to-rose-500 flex items-center justify-center text-white shadow-sm shadow-rose-600/20 font-bold text-xs">
-                        RP
-                    </div>
+                    <img src="{{ asset('logo.jpeg') }}" alt="Logo RentalPacar" class="w-9 h-9 rounded-full object-cover border border-rose-100 shadow-sm shadow-rose-600/10 shrink-0">
                     <div>
                         <span class="text-sm font-extrabold tracking-tight text-slate-900 block">RentalPacar</span>
                         <span class="text-[10px] font-bold text-rose-600 uppercase tracking-wider block">Panel Admin</span>

@@ -46,6 +46,7 @@ class DatabaseSeeder extends Seeder
         $services = [
             [
                 'service_name' => 'Chat Seharian',
+                'category' => 'basic',
                 'description' => 'Fast response chat dari pagi hingga malam hari, siap menemani aktivitas dan mendengarkan keluh kesahmu.',
                 'duration' => '1 Hari',
                 'price' => 35000,
@@ -53,6 +54,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'service_name' => 'Voice Call 1 Jam',
+                'category' => 'basic',
                 'description' => 'Obrolan santai atau deep talk via Discord / WA Call. Bebas bahas topik apapun yang kamu sukai.',
                 'duration' => '60 Menit',
                 'price' => 50000,
@@ -60,9 +62,18 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'service_name' => 'Main Game Bareng',
+                'category' => 'premium',
                 'description' => 'Mabar Mobile Legends atau game santai lainnya. Suasana fun dan anti toxic.',
                 'duration' => '2 Match',
                 'price' => 45000,
+                'is_active' => true,
+            ],
+            [
+                'service_name' => 'VIP Video Call & Date Virtual',
+                'category' => 'premium',
+                'description' => 'Kencan virtual eksklusif tatap muka 1-on-1, ngobrol seru sambil makan bareng atau nonton film.',
+                'duration' => '90 Menit',
+                'price' => 120000,
                 'is_active' => true,
             ],
         ];

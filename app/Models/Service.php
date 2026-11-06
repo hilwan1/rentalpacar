@@ -9,9 +9,13 @@ class Service extends Model
 {
     use HasFactory;
 
+    public const CATEGORY_BASIC = 'basic';
+    public const CATEGORY_PREMIUM = 'premium';
+
     protected $fillable = [
         'talent_id',
         'service_name',
+        'category',
         'description',
         'duration',
         'price',
@@ -24,6 +28,21 @@ class Service extends Model
             'price' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function isPremium(): bool
+    {
+        return strtolower($this->category ?? '') === self::CATEGORY_PREMIUM;
+    }
+
+    public function isBasic(): bool
+    {
+        return ! $this->isPremium();
+    }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return $this->isPremium() ? 'Premium' : 'Basic';
     }
 
     public function talent()

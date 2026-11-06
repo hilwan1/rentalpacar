@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -83,6 +84,7 @@ class AdminTalentController extends Controller
             'is_active' => ['nullable', 'boolean'],
             'services' => ['required', 'array', 'min:1'],
             'services.*.service_name' => ['required', 'string', 'max:100'],
+            'services.*.category' => ['nullable', 'in:basic,premium'],
             'services.*.duration' => ['required', 'string', 'max:50'],
             'services.*.price' => ['required', 'numeric', 'min:0'],
             'services.*.description' => ['nullable', 'string', 'max:500'],
@@ -133,6 +135,7 @@ class AdminTalentController extends Controller
                     Service::create([
                         'talent_id' => $newTalent->id,
                         'service_name' => trim($srv['service_name']),
+                        'category' => !empty($srv['category']) && in_array($srv['category'], ['basic', 'premium']) ? $srv['category'] : 'basic',
                         'duration' => trim($srv['duration']),
                         'price' => (int) $srv['price'],
                         'description' => !empty($srv['description']) ? trim($srv['description']) : null,
@@ -181,6 +184,7 @@ class AdminTalentController extends Controller
             'services' => ['required', 'array', 'min:1'],
             'services.*.id' => ['nullable', 'integer', 'exists:services,id'],
             'services.*.service_name' => ['required', 'string', 'max:100'],
+            'services.*.category' => ['nullable', 'in:basic,premium'],
             'services.*.duration' => ['required', 'string', 'max:50'],
             'services.*.price' => ['required', 'numeric', 'min:0'],
             'services.*.description' => ['nullable', 'string', 'max:500'],
@@ -254,6 +258,7 @@ class AdminTalentController extends Controller
                     if ($existingService) {
                         $existingService->update([
                             'service_name' => trim($srvData['service_name']),
+                            'category' => !empty($srvData['category']) && in_array($srvData['category'], ['basic', 'premium']) ? $srvData['category'] : $existingService->category,
                             'duration' => trim($srvData['duration']),
                             'price' => (int) $srvData['price'],
                             'description' => !empty($srvData['description']) ? trim($srvData['description']) : null,
@@ -265,6 +270,7 @@ class AdminTalentController extends Controller
                     $newService = Service::create([
                         'talent_id' => $talent->id,
                         'service_name' => trim($srvData['service_name']),
+                        'category' => !empty($srvData['category']) && in_array($srvData['category'], ['basic', 'premium']) ? $srvData['category'] : 'basic',
                         'duration' => trim($srvData['duration']),
                         'price' => (int) $srvData['price'],
                         'description' => !empty($srvData['description']) ? trim($srvData['description']) : null,
@@ -304,6 +310,34 @@ class AdminTalentController extends Controller
         $statusText = $talent->is_active ? 'diaktifkan dan dapat tampil di katalog publik' : 'dinonaktifkan dari katalog publik';
 
         return back()->with('success', "Status akun talent {$talent->name} berhasil {$statusText}.");
+    }
+
+    public function destroy($id)
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Akses khusus Administrator.');
+        }
+
+        $talent = User::where('role', 'talent')->findOrFail($id);
+        $talentName = $talent->name;
+
+        DB::transaction(function () use ($talent) {
+            // Hapus riwayat pesanan yang terhubung dengan talent ini
+            Order::where('talent_id', $talent->id)->delete();
+
+            // Hapus seluruh paket layanan milik talent
+            Service::where('talent_id', $talent->id)->delete();
+
+            // Hapus foto profil dari storage publik jika bukan URL eksternal
+            if ($talent->avatar && !str_starts_with($talent->avatar, 'http://') && !str_starts_with($talent->avatar, 'https://')) {
+                Storage::disk('public')->delete($talent->avatar);
+            }
+
+            // Hapus akun talent
+            $talent->delete();
+        });
+
+        return redirect()->route('admin.talents.index')->with('success', "Akun talent {$talentName} beserta seluruh paket layanannya berhasil dihapus.");
     }
 }
 

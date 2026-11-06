@@ -3,10 +3,8 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
             <!-- Profil Header -->
             <div class="relative inline-block mb-5">
-                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full ring-4 ring-rose-100 bg-gradient-to-tr from-rose-600 to-rose-500 flex items-center justify-center text-white mx-auto shadow-xl shadow-rose-600/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 sm:w-14 sm:h-14 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full ring-4 ring-rose-100 overflow-hidden mx-auto shadow-xl shadow-rose-600/20 bg-white">
+                    <img src="{{ asset('logo.jpeg') }}" alt="Logo RentalPacar" class="w-full h-full object-cover rounded-full">
                 </div>
             </div>
 

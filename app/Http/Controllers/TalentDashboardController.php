@@ -105,14 +105,22 @@ class TalentDashboardController extends Controller
 
         $validated = $request->validate([
             'service_name' => 'required|string|max:100',
+            'category' => 'nullable|in:basic,premium',
             'description' => 'nullable|string|max:300',
             'duration' => 'required|string|max:50',
             'price' => 'required|integer|min:5000',
+        ], [
+            'service_name.required' => 'Nama layanan wajib diisi.',
+            'category.in' => 'Kategori paket layanan harus berupa Basic atau Premium.',
+            'duration.required' => 'Durasi layanan wajib diisi.',
+            'price.required' => 'Tarif harga layanan wajib diisi.',
+            'price.min' => 'Tarif harga layanan minimal Rp 5.000.',
         ]);
 
         Service::create([
             'talent_id' => $talent->id,
             'service_name' => $validated['service_name'],
+            'category' => $validated['category'] ?? 'basic',
             'description' => $validated['description'] ?? null,
             'duration' => $validated['duration'],
             'price' => $validated['price'],

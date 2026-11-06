@@ -15,9 +15,9 @@
             </div>
         </div>
 
-        @if ($errors->has('service_name') || $errors->has('duration') || $errors->has('price') || $errors->has('description'))
+        @if ($errors->has('service_name') || $errors->has('category') || $errors->has('duration') || $errors->has('price') || $errors->has('description'))
             <div class="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 space-y-1">
-                @foreach (['service_name', 'duration', 'price', 'description'] as $field)
+                @foreach (['service_name', 'category', 'duration', 'price', 'description'] as $field)
                     @error($field)
                         <p class="font-medium">• {{ $message }}</p>
                     @enderror
@@ -27,6 +27,32 @@
 
         <form action="{{ route('talent.services.store') }}" method="POST" class="space-y-4">
             @csrf
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                    Kategori Paket Layanan <span class="text-rose-600">*</span>
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label class="relative flex items-center gap-3 p-3 rounded-xl border border-slate-200 cursor-pointer hover:border-slate-300 has-[:checked]:border-rose-600 has-[:checked]:bg-rose-50/40 transition">
+                        <input type="radio" name="category" value="basic" {{ old('category', 'basic') === 'basic' ? 'checked' : '' }} class="text-rose-600 focus:ring-rose-500">
+                        <div>
+                            <span class="text-xs font-bold text-slate-900 block">Paket Basic</span>
+                            <span class="text-[11px] text-slate-500 block">Chat seharian, curhat, voice call reguler</span>
+                        </div>
+                    </label>
+
+                    <label class="relative flex items-center gap-3 p-3 rounded-xl border border-slate-200 cursor-pointer hover:border-slate-300 has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50/40 transition">
+                        <input type="radio" name="category" value="premium" {{ old('category') === 'premium' ? 'checked' : '' }} class="text-amber-600 focus:ring-amber-500">
+                        <div>
+                            <span class="text-xs font-bold text-slate-900 flex items-center gap-1">
+                                <span>Paket Premium</span>
+                                <span class="text-[11px] text-amber-600 font-extrabold">⭐</span>
+                            </span>
+                            <span class="text-[11px] text-slate-500 block">Video call, date virtual, mabar prioritas</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label for="service_name" class="block text-xs font-bold text-slate-700 mb-1.5">
@@ -114,13 +140,27 @@
         @if ($services->isNotEmpty())
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @foreach ($services as $srv)
-                    <div class="p-4 rounded-2xl border transition-all duration-150 flex flex-col justify-between {{ $srv->is_active ? 'border-slate-200 bg-white hover:border-rose-200 shadow-2xs' : 'border-slate-100 bg-slate-50/70 opacity-75' }}">
+                    <div class="p-4 rounded-2xl border transition-all duration-150 flex flex-col justify-between {{ $srv->is_active ? ($srv->isPremium() ? 'border-amber-200/90 bg-gradient-to-br from-amber-50/25 via-white to-white hover:border-amber-300 shadow-2xs' : 'border-slate-200 bg-white hover:border-rose-200 shadow-2xs') : 'border-slate-100 bg-slate-50/70 opacity-75' }}">
                         <div class="space-y-2">
                             <div class="flex items-start justify-between gap-2">
-                                <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">{{ $srv->service_name }}</h3>
-                                <span class="text-[10px] px-2 py-0.5 rounded-md font-bold shrink-0 {{ $srv->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-200 text-slate-600' }}">
-                                    {{ $srv->is_active ? 'Aktif' : 'Nonaktif' }}
-                                </span>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                                        @if ($srv->isPremium())
+                                            <span class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-md font-extrabold bg-amber-50 text-amber-800 border border-amber-300">
+                                                <span>⭐</span>
+                                                <span>Premium</span>
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center text-[10px] px-2 py-0.5 rounded-md font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                                Basic
+                                            </span>
+                                        @endif
+                                        <span class="text-[10px] px-2 py-0.5 rounded-md font-bold shrink-0 {{ $srv->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-200 text-slate-600' }}">
+                                            {{ $srv->is_active ? 'Aktif' : 'Nonaktif' }}
+                                        </span>
+                                    </div>
+                                    <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">{{ $srv->service_name }}</h3>
+                                </div>
                             </div>
 
                             <div class="flex items-center gap-2 flex-wrap">

@@ -20,12 +20,8 @@
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-rose-100/80 shadow-xs">
         <div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
             <!-- Brand Logo & Name -->
-            <a href="{{ route('home') }}" class="flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-rose-500 rounded-lg p-1 shrink-0">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-rose-600 to-rose-500 flex items-center justify-center text-white shadow-md shadow-rose-600/20 group-hover:scale-105 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
-                </div>
+            <a href="{{ route('home') }}" class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-rose-500 rounded-lg p-1 shrink-0">
+                <img src="{{ asset('logo.jpeg') }}" alt="Logo RentalPacar" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border border-rose-100 shadow-md shadow-rose-600/10 group-hover:scale-105 transition-transform shrink-0">
                 <div class="flex items-center gap-1">
                     <span class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 group-hover:text-rose-600 transition-colors">RentalPacar</span>
                     <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 fill-current shrink-0" viewBox="0 0 24 24" aria-label="Terverifikasi" role="img">
@@ -194,9 +190,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-7 h-7 rounded-full bg-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-xs">
-                        RP
-                    </div>
+                    <img src="{{ asset('logo.jpeg') }}" alt="Logo RentalPacar" class="w-8 h-8 rounded-full object-cover border border-rose-100 shadow-xs shrink-0">
                     <div>
                         <p class="text-xs sm:text-sm font-bold text-slate-800">RentalPacar</p>
                         <p class="text-[11px] text-slate-500">Platform Teman Cerita & Kencan Online Terpercaya</p>
@@ -216,5 +210,7 @@
             </div>
         </div>
     </footer>
+
+    @stack('scripts')
 </body>
 </html>

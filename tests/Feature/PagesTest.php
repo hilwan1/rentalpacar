@@ -230,7 +230,24 @@ class PagesTest extends TestCase
         $this->assertDatabaseHas('services', [
             'talent_id' => $talent->id,
             'service_name' => 'Paket Mabar Seru',
+            'category' => 'basic',
             'price' => 60000,
+        ]);
+
+        $premiumResponse = $this->actingAs($talent)->post('/talent/services', [
+            'service_name' => 'VIP Video Call Exclusive',
+            'category' => 'premium',
+            'duration' => '120 Menit',
+            'price' => 150000,
+            'description' => 'Eksklusif 1 on 1 date',
+        ]);
+
+        $premiumResponse->assertRedirect();
+        $this->assertDatabaseHas('services', [
+            'talent_id' => $talent->id,
+            'service_name' => 'VIP Video Call Exclusive',
+            'category' => 'premium',
+            'price' => 150000,
         ]);
     }
 
@@ -958,6 +975,57 @@ class PagesTest extends TestCase
             'name' => 'Hacker Update',
         ]);
         $putResponse->assertStatus(403);
+    }
+
+    public function test_admin_can_delete_talent(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $talent = User::create([
+            'name' => 'Talent To Delete',
+            'email' => 'talent_to_delete@example.com',
+            'password' => bcrypt('password123'),
+            'role' => 'talent',
+            'phone' => '081299990000',
+            'city' => 'Jakarta',
+            'is_active' => true,
+        ]);
+
+        $service = $talent->services()->create([
+            'service_name' => 'Layanan Hapus',
+            'duration' => '1 Jam',
+            'price' => 50000,
+            'is_active' => true,
+            'category' => 'basic',
+        ]);
+
+        Order::create([
+            'order_code' => 'DEL-' . uniqid(),
+            'talent_id' => $talent->id,
+            'service_id' => $service->id,
+            'customer_name' => 'Tester',
+            'customer_whatsapp' => '081211112222',
+            'booking_schedule' => now()->addDays(1),
+            'notes' => 'Test order to delete',
+            'service_name_snapshot' => $service->service_name,
+            'price_snapshot' => $service->price,
+        ]);
+
+        $response = $this->actingAs($admin)->delete("/admin/talents/{$talent->id}");
+
+        $response->assertRedirect('/admin/talents');
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('users', ['id' => $talent->id]);
+        $this->assertDatabaseMissing('services', ['id' => $service->id]);
+        $this->assertDatabaseMissing('orders', ['talent_id' => $talent->id]);
+    }
+
+    public function test_non_admin_cannot_delete_talent(): void
+    {
+        $talent = User::where('role', 'talent')->firstOrFail();
+
+        $response = $this->actingAs($talent)->delete("/admin/talents/{$talent->id}");
+        $response->assertStatus(403);
     }
 
     public function test_admin_can_view_orders_index_page(): void

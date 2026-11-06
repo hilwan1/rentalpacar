@@ -285,6 +285,7 @@
                                 return [
                                     'id' => $s->id,
                                     'service_name' => $s->service_name,
+                                    'category' => $s->category ?? 'basic',
                                     'duration' => $s->duration,
                                     'price' => $s->price,
                                     'description' => $s->description,
@@ -297,6 +298,7 @@
                                     [
                                         'id' => null,
                                         'service_name' => 'Chat Seharian',
+                                        'category' => 'basic',
                                         'duration' => '1 Hari',
                                         'price' => 35000,
                                         'description' => '',
@@ -347,7 +349,7 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                                 <div>
                                     <label class="block text-[11px] font-bold text-slate-700 mb-1">
                                         Nama Layanan <span class="text-rose-600">*</span>
@@ -358,6 +360,17 @@
                                            required
                                            placeholder="Contoh: Voice Call 1 Jam"
                                            class="w-full px-3.5 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-slate-800 transition">
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                                        Kategori <span class="text-rose-600">*</span>
+                                    </label>
+                                    <select name="services[{{ $index }}][category]"
+                                            class="w-full px-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-slate-800 transition font-semibold">
+                                        <option value="basic" {{ ($srv['category'] ?? 'basic') === 'basic' ? 'selected' : '' }}>Basic</option>
+                                        <option value="premium" {{ ($srv['category'] ?? '') === 'premium' ? 'selected' : '' }}>⭐ Premium</option>
+                                    </select>
                                 </div>
 
                                 <div>
@@ -519,7 +532,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                     <div>
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">
                             Nama Layanan <span class="text-rose-600">*</span>
@@ -529,6 +542,17 @@
                                required
                                placeholder="Contoh: Voice Call 1 Jam"
                                class="w-full px-3.5 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-slate-800 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                            Kategori <span class="text-rose-600">*</span>
+                        </label>
+                        <select name="services[${newIndex}][category]"
+                                class="w-full px-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-slate-800 transition font-semibold">
+                            <option value="basic">Basic</option>
+                            <option value="premium">⭐ Premium</option>
+                        </select>
                     </div>
 
                     <div>

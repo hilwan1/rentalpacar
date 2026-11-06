@@ -68,44 +68,174 @@
                         @csrf
                         <input type="hidden" name="talent_id" value="{{ $talent->id }}">
 
-                        <!-- 1. Pilihan Layanan -->
-                        <div class="bg-white rounded-3xl p-6 shadow-xs border border-slate-200/80">
-                            <h2 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
-                                <span class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs">1</span>
-                                <span>Pilih Paket Layanan</span>
-                            </h2>
+                        <!-- 1. Pilihan Layanan (Kategori Basic & Premium dengan Tab Switcher) -->
+                        <div class="bg-white rounded-3xl p-6 shadow-xs border border-slate-200/80 space-y-5">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs">1</span>
+                                    <span>Pilih Paket Layanan</span>
+                                </h2>
+                                <span class="text-[11px] text-slate-500 font-medium">Pilih salah satu paket</span>
+                            </div>
 
                             @error('service_id')
-                                <p class="text-xs text-rose-600 mb-3 font-medium">{{ $message }}</p>
+                                <p class="text-xs text-rose-600 font-medium">{{ $message }}</p>
                             @enderror
 
-                            @if ($talent->services->isNotEmpty())
-                                <div class="space-y-3">
-                                    @foreach ($talent->services as $service)
-                                        <label class="relative block cursor-pointer">
-                                            <input type="radio" name="service_id" value="{{ $service->id }}" class="peer sr-only" {{ $loop->first ? 'checked' : '' }} required>
-                                            <div class="p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-rose-200 peer-checked:border-rose-600 peer-checked:bg-rose-50/40 peer-checked:shadow-xs transition flex items-center justify-between gap-4">
-                                                <div class="flex-1">
-                                                    <div class="flex items-center gap-2">
-                                                        <h3 class="text-sm font-bold text-slate-800">{{ $service->service_name }}</h3>
-                                                        <span class="text-[11px] bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full font-semibold">
-                                                            {{ $service->duration }}
-                                                        </span>
-                                                    </div>
-                                                    @if ($service->description)
-                                                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">{{ $service->description }}</p>
-                                                    @endif
-                                                </div>
+                            @php
+                                $activeServices = $talent->services->where('is_active', true);
+                                $basicServices = $activeServices->filter(fn($s) => $s->isBasic());
+                                $premiumServices = $activeServices->filter(fn($s) => $s->isPremium());
+                                $selectedServiceId = (int) old('service_id', $activeServices->first()?->id);
+                                $hasBothCategories = $basicServices->isNotEmpty() && $premiumServices->isNotEmpty();
+                                
+                                // Tentukan tab aktif awal berdasarkan service yang terpilih
+                                $initialCategory = 'basic';
+                                if ($premiumServices->contains('id', $selectedServiceId) || ($basicServices->isEmpty() && $premiumServices->isNotEmpty())) {
+                                    $initialCategory = 'premium';
+                                }
+                            @endphp
 
-                                                <div class="text-right">
-                                                    <span class="text-sm font-extrabold text-rose-600">
-                                                        Rp {{ number_format($service->price, 0, ',', '.') }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </label>
-                                    @endforeach
-                                </div>
+                            @if ($activeServices->isNotEmpty())
+                                @if ($hasBothCategories)
+                                    <!-- Tab Pill Switcher Antara Paket Basic & Paket Premium -->
+                                    <div class="grid grid-cols-2 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200/80 gap-1.5" role="tablist">
+                                        <button type="button"
+                                                id="tab-btn-service-basic"
+                                                data-service-tab="basic"
+                                                role="tab"
+                                                aria-selected="{{ $initialCategory === 'basic' ? 'true' : 'false' }}"
+                                                class="service-tab-btn flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-3 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-95 {{ $initialCategory === 'basic' ? 'bg-white text-slate-900 shadow-2xs border border-slate-200/80 font-extrabold' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 font-semibold border border-transparent' }}">
+                                            <span class="w-2 h-2 rounded-full bg-rose-600 tab-selected-dot shrink-0 {{ $basicServices->contains('id', $selectedServiceId) ? 'inline-block' : 'hidden' }}"></span>
+                                            <span>Paket Basic</span>
+                                            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-slate-100 text-slate-700 shrink-0">
+                                                {{ $basicServices->count() }}
+                                            </span>
+                                        </button>
+
+                                        <button type="button"
+                                                id="tab-btn-service-premium"
+                                                data-service-tab="premium"
+                                                role="tab"
+                                                aria-selected="{{ $initialCategory === 'premium' ? 'true' : 'false' }}"
+                                                class="service-tab-btn flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-3 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-95 {{ $initialCategory === 'premium' ? 'bg-white text-slate-900 shadow-2xs border border-amber-300 font-extrabold' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 font-semibold border border-transparent' }}">
+                                            <span class="w-2 h-2 rounded-full bg-amber-500 tab-selected-dot shrink-0 {{ $premiumServices->contains('id', $selectedServiceId) ? 'inline-block' : 'hidden' }}"></span>
+                                            <span class="flex items-center gap-1">
+                                                <span class="text-amber-500">⭐</span>
+                                                <span>Paket Premium</span>
+                                            </span>
+                                            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 shrink-0">
+                                                {{ $premiumServices->count() }}
+                                            </span>
+                                        </button>
+                                    </div>
+                                @endif
+
+                                <!-- Panel Paket Basic -->
+                                @if ($basicServices->isNotEmpty())
+                                    <div id="service-panel-basic" class="service-panel space-y-3 {{ $initialCategory === 'basic' ? 'block' : 'hidden' }}">
+                                        <div class="flex items-center justify-between text-xs text-slate-500">
+                                            <span>Layanan obrolan, teman cerita santai, dan voice call</span>
+                                            <span class="text-[11px] text-slate-400 font-medium">{{ $basicServices->count() }} paket tersedia</span>
+                                        </div>
+
+                                        <div class="space-y-2.5">
+                                            @foreach ($basicServices as $service)
+                                                <label class="relative block cursor-pointer group">
+                                                    <input type="radio"
+                                                           name="service_id"
+                                                           value="{{ $service->id }}"
+                                                           data-category="basic"
+                                                           class="peer sr-only service-radio-item"
+                                                           {{ $selectedServiceId === $service->id ? 'checked' : '' }}
+                                                           required>
+                                                    <div class="p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 peer-checked:border-rose-600 peer-checked:bg-rose-50/40 peer-checked:ring-2 peer-checked:ring-rose-500/20 peer-checked:shadow-xs transition-all flex items-center justify-between gap-3 sm:gap-4">
+                                                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                                                            <!-- Indikator Radio Lingkaran -->
+                                                            <div class="w-5 h-5 rounded-full border-2 border-slate-300 group-has-[:checked]:border-rose-600 group-has-[:checked]:bg-rose-600 flex items-center justify-center shrink-0 transition-colors">
+                                                                <span class="w-2 h-2 rounded-full bg-white hidden group-has-[:checked]:block"></span>
+                                                            </div>
+
+                                                            <div class="flex-1 min-w-0">
+                                                                <div class="flex items-center gap-2 flex-wrap">
+                                                                    <h3 class="text-sm font-bold text-slate-800 group-has-[:checked]:text-rose-950">{{ $service->service_name }}</h3>
+                                                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full font-semibold">
+                                                                        ⏱ {{ $service->duration }}
+                                                                    </span>
+                                                                </div>
+                                                                @if ($service->description)
+                                                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">{{ $service->description }}</p>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="text-right shrink-0">
+                                                            <span class="text-sm font-extrabold text-slate-900 block group-has-[:checked]:text-rose-600">
+                                                                Rp {{ number_format($service->price, 0, ',', '.') }}
+                                                            </span>
+                                                            <span class="hidden group-has-[:checked]:inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full mt-1">
+                                                                ✓ Terpilih
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Panel Paket Premium -->
+                                @if ($premiumServices->isNotEmpty())
+                                    <div id="service-panel-premium" class="service-panel space-y-3 {{ $initialCategory === 'premium' ? 'block' : 'hidden' }}">
+                                        <div class="flex items-center justify-between text-xs text-amber-700">
+                                            <span>Layanan temu langsung VIP & kencan spesial lebih eksklusif</span>
+                                            <span class="text-[11px] text-amber-600/80 font-medium">{{ $premiumServices->count() }} paket tersedia</span>
+                                        </div>
+
+                                        <div class="space-y-2.5">
+                                            @foreach ($premiumServices as $service)
+                                                <label class="relative block cursor-pointer group">
+                                                    <input type="radio"
+                                                           name="service_id"
+                                                           value="{{ $service->id }}"
+                                                           data-category="premium"
+                                                           class="peer sr-only service-radio-item"
+                                                           {{ $selectedServiceId === $service->id ? 'checked' : '' }}
+                                                           required>
+                                                    <div class="p-4 rounded-2xl border-2 border-amber-200/90 bg-white hover:border-amber-300 peer-checked:border-amber-500 peer-checked:bg-amber-50/40 peer-checked:ring-2 peer-checked:ring-amber-400/30 peer-checked:shadow-xs transition-all flex items-center justify-between gap-3 sm:gap-4">
+                                                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                                                            <!-- Indikator Radio Lingkaran -->
+                                                            <div class="w-5 h-5 rounded-full border-2 border-amber-300 group-has-[:checked]:border-amber-500 group-has-[:checked]:bg-amber-500 flex items-center justify-center shrink-0 transition-colors">
+                                                                <span class="w-2 h-2 rounded-full bg-white hidden group-has-[:checked]:block"></span>
+                                                            </div>
+
+                                                            <div class="flex-1 min-w-0">
+                                                                <div class="flex items-center gap-2 flex-wrap">
+                                                                    <h3 class="text-sm font-bold text-slate-900 group-has-[:checked]:text-amber-950">{{ $service->service_name }}</h3>
+                                                                    <span class="text-[10px] bg-amber-100/60 text-amber-800 px-2 py-0.5 rounded-full font-semibold">
+                                                                        ⏱ {{ $service->duration }}
+                                                                    </span>
+                                                                </div>
+                                                                @if ($service->description)
+                                                                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">{{ $service->description }}</p>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="text-right shrink-0">
+                                                            <span class="text-sm sm:text-base font-extrabold text-slate-900 block group-has-[:checked]:text-amber-700">
+                                                                Rp {{ number_format($service->price, 0, ',', '.') }}
+                                                            </span>
+                                                            <span class="hidden group-has-[:checked]:inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-full mt-1">
+                                                                ✓ Terpilih
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
                             @else
                                 <div class="p-6 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-center text-xs text-slate-500">
                                     Talent ini belum memiliki paket layanan aktif.
@@ -188,4 +318,75 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabBtns = document.querySelectorAll('.service-tab-btn');
+            const panels = document.querySelectorAll('.service-panel');
+            const radioInputs = document.querySelectorAll('.service-radio-item');
+
+            function updateTabSelectedDots() {
+                const checkedRadio = document.querySelector('.service-radio-item:checked');
+                if (!checkedRadio) return;
+
+                const category = checkedRadio.getAttribute('data-category');
+                tabBtns.forEach(btn => {
+                    const btnCategory = btn.getAttribute('data-service-tab');
+                    const dot = btn.querySelector('.tab-selected-dot');
+                    if (dot) {
+                        if (btnCategory === category) {
+                            dot.classList.remove('hidden');
+                            dot.classList.add('inline-block');
+                        } else {
+                            dot.classList.remove('inline-block');
+                            dot.classList.add('hidden');
+                        }
+                    }
+                });
+            }
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const targetTab = this.getAttribute('data-service-tab');
+
+                    tabBtns.forEach(b => {
+                        const isTarget = b === btn;
+                        b.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+                        if (isTarget) {
+                            b.classList.add('bg-white', 'text-slate-900', 'shadow-2xs', 'font-extrabold');
+                            b.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60', 'font-semibold', 'border-transparent');
+                            if (targetTab === 'premium') {
+                                b.classList.add('border-amber-300');
+                                b.classList.remove('border-slate-200/80');
+                            } else {
+                                b.classList.add('border-slate-200/80');
+                                b.classList.remove('border-amber-300');
+                            }
+                        } else {
+                            b.classList.remove('bg-white', 'text-slate-900', 'shadow-2xs', 'border-slate-200/80', 'border-amber-300', 'font-extrabold');
+                            b.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60', 'font-semibold', 'border-transparent');
+                        }
+                    });
+
+                    panels.forEach(panel => {
+                        if (panel.id === `service-panel-${targetTab}`) {
+                            panel.classList.remove('hidden');
+                            panel.classList.add('block');
+                        } else {
+                            panel.classList.remove('block');
+                            panel.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            radioInputs.forEach(input => {
+                input.addEventListener('change', updateTabSelectedDots);
+            });
+
+            updateTabSelectedDots();
+        });
+    </script>
+    @endpush
 </x-guest-layout>

@@ -87,6 +87,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/talents', [AdminTalentController::class, 'store'])->name('talents.store');
         Route::get('/talents/{id}/edit', [AdminTalentController::class, 'edit'])->name('talents.edit');
         Route::put('/talents/{id}', [AdminTalentController::class, 'update'])->name('talents.update');
+        Route::delete('/talents/{id}', [AdminTalentController::class, 'destroy'])->name('talents.destroy');
         Route::post('/talents/{id}/toggle-status', [AdminTalentController::class, 'toggleStatus'])->name('talents.toggle-status');
         Route::get('/settings/whatsapp', [AdminSettingController::class, 'showWhatsAppSettings'])->name('settings.whatsapp');
         Route::post('/settings/whatsapp', [AdminSettingController::class, 'updateWhatsAppSettings'])->name('settings.whatsapp.update');

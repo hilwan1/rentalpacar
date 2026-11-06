@@ -38,7 +38,7 @@
 
         <!-- Card Form Tambah Testimoni -->
         <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
-            <form action="{{ route('admin.testimonials.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('admin.testimonials.store') }}" method="POST" class="space-y-6">
                 @csrf
 
                 <!-- Nama / Inisial Pelanggan -->
@@ -134,50 +134,6 @@
                     @enderror
                 </div>
 
-                <!-- Upload Screenshot Chat Percakapan -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-800 mb-1.5">
-                        Bukti Screenshot Chat Percakapan <span class="text-slate-400 font-normal">(Opsional)</span>
-                    </label>
-
-                    <div class="relative border-2 border-dashed border-slate-200 hover:border-rose-300 rounded-2xl p-5 text-center transition bg-slate-50/50">
-                        <input type="file"
-                               id="screenshot"
-                               name="screenshot"
-                               accept="image/jpeg,image/png,image/jpg,image/webp"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                               onchange="previewTestimonialImage(this)">
-
-                        <div id="upload-placeholder" class="flex flex-col items-center justify-center py-2">
-                            <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-2">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                            </div>
-                            <p class="text-xs font-bold text-slate-700">Pilih gambar screenshot chat</p>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Format JPG, PNG, atau WEBP (Maksimal 2 MB)</p>
-                        </div>
-
-                        <!-- Live Preview Box -->
-                        <div id="image-preview-wrapper" class="hidden relative max-w-sm mx-auto">
-                            <img id="image-preview" src="#" alt="Pratinjau Screenshot" class="rounded-xl max-h-56 mx-auto object-cover border border-slate-200 shadow-xs">
-                            <p id="file-name-text" class="text-[11px] text-slate-600 font-medium mt-2 truncate"></p>
-                            <button type="button"
-                                    onclick="clearTestimonialImage(event)"
-                                    class="relative z-20 mt-2 px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[11px] font-semibold rounded-lg transition inline-flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                                <span>Ganti / Batalkan Foto</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    @error('screenshot')
-                        <p class="text-[11px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 <!-- Status Publikasi -->
                 <div class="pt-2 border-t border-slate-100">
                     <label class="relative flex items-start gap-3 cursor-pointer select-none">
@@ -214,42 +170,4 @@
             </form>
         </div>
     </div>
-
-    <!-- Script Live Image Preview -->
-    <script>
-        function previewTestimonialImage(input) {
-            const file = input.files?.[0];
-            const placeholder = document.getElementById('upload-placeholder');
-            const previewWrapper = document.getElementById('image-preview-wrapper');
-            const preview = document.getElementById('image-preview');
-            const fileNameText = document.getElementById('file-name-text');
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    fileNameText.textContent = file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
-                    placeholder.classList.add('hidden');
-                    previewWrapper.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function clearTestimonialImage(e) {
-            e.preventDefault();
-            const input = document.getElementById('screenshot');
-            const placeholder = document.getElementById('upload-placeholder');
-            const previewWrapper = document.getElementById('image-preview-wrapper');
-            const preview = document.getElementById('image-preview');
-            const fileNameText = document.getElementById('file-name-text');
-
-            input.value = '';
-            preview.src = '#';
-            fileNameText.textContent = '';
-            previewWrapper.classList.add('hidden');
-            placeholder.classList.remove('hidden');
-        }
-    </script>
 </x-admin-layout>
-
