@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 // Halaman Publik (Customer View)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+Route::post('/testimonials', [TestimonialController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('testimonials.store');
 Route::get('/talents', [TalentController::class, 'index'])->name('talents.index');
 Route::get('/talents/{id}', [TalentController::class, 'show'])->name('talents.show');
 Route::get('/top-talent', [TopTalentController::class, 'index'])->name('top-talents.index');

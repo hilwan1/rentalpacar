@@ -22,7 +22,7 @@
                         Tayang Publik: <strong>{{ $publishedCount }}</strong>
                     </span>
                     <span class="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold">
-                        Draft / Nonaktif: <strong>{{ $draftCount }}</strong>
+                        Menunggu Review / Draft: <strong>{{ $draftCount }}</strong>
                     </span>
                     <span class="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold flex items-center gap-1">
                         <span>Rata-rata:</span>
@@ -86,8 +86,8 @@
                             onchange="this.form.submit()"
                             class="w-full px-3.5 py-2.5 text-xs bg-slate-50/50 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white text-slate-700 transition cursor-pointer">
                         <option value="all" {{ $status === 'all' ? 'selected' : '' }}>Semua Status</option>
-                        <option value="published" {{ $status === 'published' ? 'selected' : '' }}>Hanya Publik</option>
-                        <option value="draft" {{ $status === 'draft' ? 'selected' : '' }}>Hanya Draft</option>
+                        <option value="published" {{ $status === 'published' ? 'selected' : '' }}>Hanya Disetujui (Publik)</option>
+                        <option value="draft" {{ $status === 'draft' ? 'selected' : '' }}>Menunggu Review / Draft</option>
                     </select>
                 </div>
 
@@ -201,12 +201,12 @@
                                         @if ($item->is_published)
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                <span>Publik</span>
+                                                <span>Disetujui</span>
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500 border border-slate-200">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                                <span>Draft</span>
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200" title="Menunggu persetujuan admin">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                                <span>Menunggu Review</span>
                                             </span>
                                         @endif
                                     </td>
@@ -214,20 +214,19 @@
                                     <!-- Aksi -->
                                     <td class="py-4 px-5 text-right">
                                         <div class="flex items-center justify-end gap-1.5">
-                                            <!-- Toggle Status -->
+                                            <!-- Toggle Status / Setujui -->
                                             <form action="{{ route('admin.testimonials.toggle-status', $item->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit"
-                                                        title="{{ $item->is_published ? 'Sembunyikan dari publik' : 'Tampilkan di halaman publik' }}"
+                                                        title="{{ $item->is_published ? 'Sembunyikan / Ubah jadi draft' : 'Setujui & Terbitkan ke publik' }}"
                                                         class="p-1.5 rounded-lg border text-xs font-semibold transition {{ $item->is_published ? 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100' : 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100' }}">
                                                     @if ($item->is_published)
                                                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
                                                         </svg>
                                                     @else
-                                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                                         </svg>
                                                     @endif
                                                 </button>

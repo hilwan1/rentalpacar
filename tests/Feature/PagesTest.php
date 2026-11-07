@@ -793,6 +793,57 @@ class PagesTest extends TestCase
         $createResponse->assertStatus(403);
     }
 
+    public function test_guest_can_submit_testimonial_pending_admin_approval(): void
+    {
+        $talent = User::where('role', 'talent')->where('is_active', true)->firstOrFail();
+
+        // Guest submit testimoni
+        $response = $this->post('/testimonials', [
+            'customer_alias' => 'Guest Tester (Surabaya)',
+            'talent_id' => $talent->id,
+            'rating' => 5,
+            'content' => 'Pengalaman kencan virtual yang seru dan menyenangkan!',
+        ]);
+
+        $response->assertRedirect('/testimonials');
+        $response->assertSessionHas('success');
+
+        // Pastikan masuk ke database dengan is_published = false
+        $testimonial = Testimonial::where('customer_alias', 'Guest Tester (Surabaya)')->firstOrFail();
+        $this->assertFalse($testimonial->is_published);
+        $this->assertEquals($talent->id, $testimonial->talent_id);
+
+        // Pastikan TIDAK muncul di halaman publik sebelum disetujui
+        $publicResponse = $this->get('/testimonials');
+        $publicResponse->assertStatus(200);
+        $publicResponse->assertDontSee('Guest Tester (Surabaya)');
+
+        // Admin menyetujui testimoni tersebut
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $toggleResponse = $this->actingAs($admin)->post("/admin/testimonials/{$testimonial->id}/toggle-status");
+        $toggleResponse->assertRedirect();
+
+        $testimonial->refresh();
+        $this->assertTrue($testimonial->is_published);
+
+        // Setelah disetujui admin, pastikan SEKARANG muncul di halaman publik
+        $approvedResponse = $this->get('/testimonials');
+        $approvedResponse->assertStatus(200);
+        $approvedResponse->assertSee('Guest Tester (Surabaya)');
+        $approvedResponse->assertSee('Pengalaman kencan virtual yang seru');
+    }
+
+    public function test_guest_testimonial_validation(): void
+    {
+        $response = $this->post('/testimonials', [
+            'customer_alias' => '',
+            'rating' => 6,
+            'content' => '',
+        ]);
+
+        $response->assertSessionHasErrors(['customer_alias', 'rating', 'content']);
+    }
+
     public function test_admin_can_access_create_talent_page(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
